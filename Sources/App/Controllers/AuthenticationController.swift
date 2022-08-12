@@ -1,10 +1,18 @@
 import Vapor
 import Fluent
+import JWTKit
+import VaporTypedRoutes
 
 struct AuthenticationController: RouteCollection {
+    
     func boot(routes: RoutesBuilder) throws {
         routes.group("auth") { auth in
+                        
             auth.post("register", use: register)
+                .summary("User Register")
+                .description("User Request / User Response")
+                .tags("Auth")
+            
             auth.post("login", use: login)
             
             auth.group("email-verification") { emailVerificationRoutes in
@@ -79,12 +87,14 @@ struct AuthenticationController: RouteCollection {
                 let token = req.random.generate(bits: 256)
                 let refreshToken = try RefreshToken(token: SHA256.hash(token), userID: user.requireID())
                 
+                let kidString = MyKeyPair.shared.currentKeyPair?.kid
+                let kid = kidString != nil && !(kidString?.isEmpty ?? true) ? JWKIdentifier(string: kidString!) : nil
                 return req.refreshTokens
                     .create(refreshToken)
                     .flatMapThrowing {
                         try LoginResponse(
                             user: UserDTO(from: user),
-                            accessToken: req.jwt.sign(Payload(with: user)),
+                            accessToken: req.jwt.sign(Payload(with: user), kid: kid),
                             refreshToken: token
                         )
                 }

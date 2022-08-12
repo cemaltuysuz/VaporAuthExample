@@ -20,7 +20,10 @@ let package = Package(
         .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "1.0.0-rc.1"),
         
         // Mailgun
-        .package(url: "https://github.com/vapor-community/mailgun.git", from: "5.0.0")
+        .package(url: "https://github.com/vapor-community/mailgun.git", from: "5.0.0"),
+        
+        .package(url: "https://github.com/mattpolzin/VaporOpenAPI.git", .exact("0.0.18")),
+        .package(url: "https://github.com/jpsim/Yams.git", from: "4.0.0")
     ],
     targets: [
         .target(name: "App", dependencies: [
@@ -29,7 +32,9 @@ let package = Package(
             .product(name: "Vapor", package: "vapor"),
             .product(name: "JWT", package: "jwt"),
             .product(name: "QueuesRedisDriver", package: "queues-redis-driver"),
-            .product(name: "Mailgun", package: "mailgun")
+            .product(name: "Mailgun", package: "mailgun"),
+            "VaporOpenAPI",
+            "Yams"
         ]),
         .target(name: "Run", dependencies: [
             .target(name: "App"),

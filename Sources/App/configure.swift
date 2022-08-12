@@ -15,6 +15,9 @@ public func configure(_ app: Application) throws {
              else {
                  fatalError("Failed to load JWKS Keypair file at: \(jwksFilePath)")
          }
+        if let keyPair = try? JSONDecoder().decode(Keypair.self, from: jwks){
+            MyKeyPair.shared.currentKeyPair = keyPair.keys.first
+        }
          try app.jwt.signers.use(jwksJSON: jwksString)
     }
     
@@ -23,8 +26,8 @@ public func configure(_ app: Application) throws {
     app.databases.use(
         .postgres(
             hostname: Environment.get("POSTGRES_HOSTNAME") ?? "localhost",
-            username: Environment.get("POSTGRES_USERNAME") ?? "vapor",
-            password: Environment.get("POSTGRES_PASSWORD") ?? "password",
+            username: Environment.get("POSTGRES_USERNAME") ?? "postgres",
+            password: Environment.get("POSTGRES_PASSWORD") ?? "",
             database: Environment.get("POSTGRES_DATABASE") ?? "vapor"
         ), as: .psql)
         

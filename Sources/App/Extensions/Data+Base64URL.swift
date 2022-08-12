@@ -4,6 +4,10 @@ extension Data {
     public func base64URLEncodedString(options: Data.Base64EncodingOptions = []) -> String {
         return base64EncodedString(options: options).base64URLEscaped()
     }
+    
+    var prettyString: NSString? {
+        return NSString(data: self, encoding: String.Encoding.utf8.rawValue) ?? nil
+    }
 }
 
 extension String {
